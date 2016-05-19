@@ -8,7 +8,7 @@
 	var self;
 	var defaults={
 		decoder:"youtubeinmp4",
-		preBuf:true,
+		preBuf:false,
 		flashFallBack:false,
 	};
 	
@@ -34,9 +34,11 @@
 	
 	Plugin.prototype.init=function(){
 		var yt_id = $(this.element).attr("youtube_id");
+		var key = userKeyGen(80);
+		var src = 'http://youtubeinmp4.com/redirect.php?video='+yt_id+'&r='+key;
 		if(this.options['preBuf']){
 			var video = this.element;
-			video.src = 'http://youtubeinmp4.com/redirect.php?video='+yt_id;
+			video.src = src;
 			video.controls = true;
 			video.muted = true; 
 			video.play();
@@ -57,11 +59,21 @@
 			}, false);
 		}else{
 			$(this.element).attr("poster","http://img.youtube.com/vi/"+yt_id+"/default.jpg");
-			var srcTag = $("<source src='http://youtubeinmp4.com/redirect.php?video="+yt_id+"' type=\"video/mp4\" />").appendTo(this.element);
+			var srcTag = $("<source src='"+src+"' type=\"video/mp4\" />").appendTo(this.element);
 		}
 		if(this.options['flashFallBack']){
 			var frmTag = $("<iframe src='https://www.youtube.com/v/"+yt_id+"?rel=0' frameborder='0' allowfullscreen></iframe>").appendTo(this.element);
 		}
+	}
+	
+	function userKeyGen(length){
+		var text = "";
+		var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+		for( var i=0; i < length; i++ )
+			text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+		return text;
 	}
 	
 })(jQuery,window,document);
