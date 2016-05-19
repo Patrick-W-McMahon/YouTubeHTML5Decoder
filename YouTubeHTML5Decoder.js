@@ -26,8 +26,9 @@
 	
 	Plugin.prototype.init=function(){
 		var yt_id = $(this.element).attr("youtube_id");
+		$(this.element).attr("poster","http://img.youtube.com/vi/"+yt_id+"/default.jpg");
 		var srcTag = $("<source src='http://youtubeinmp4.com/redirect.php?video="+yt_id+"' type='video/mp4' />").appendTo(this.element);
-		//var frmTag = $("<iframe src='https://www.youtube.com/v/"+yt_id+"?rel=0' frameborder='0' allowfullscreen></iframe>").appendTo(this.element);
+		var frmTag = $("<iframe src='https://www.youtube.com/v/"+yt_id+"?rel=0' frameborder='0' allowfullscreen></iframe>").appendTo(this.element);
 	}
 	
 })(jQuery,window,document);
