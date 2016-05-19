@@ -1,3 +1,8 @@
+/****************************************************************************************
+* for support info on how to use YouTubeHTML5Decoder.js                                 *
+* check out the project at https://github.com/Patrick-W-McMahon/YouTubeHTML5Decoder     *
+* further updates and tutorials are provided.                                           *
+****************************************************************************************/
 ;(function($,window,document,undefined){
 	var pluginName="YT5D";
 	var self;
