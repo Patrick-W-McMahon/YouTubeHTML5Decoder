@@ -10,6 +10,7 @@
 		decoder:"youtubeinmp4",
 		preBuf:false,
 		flashFallBack:false,
+		keyLength:60,
 	};
 	
 	$.fn[pluginName]=function(options){
@@ -34,7 +35,7 @@
 	
 	Plugin.prototype.init=function(){
 		var yt_id = $(this.element).attr("youtube_id");
-		var key = userKeyGen(80);
+		var key = userKeyGen(this.options['keyLength']);
 		var src = 'http://youtubeinmp4.com/redirect.php?video='+yt_id+'&r='+key;
 		if(this.options['preBuf']){
 			var video = this.element;
