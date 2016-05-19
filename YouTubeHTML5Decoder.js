@@ -6,8 +6,11 @@
 ;(function($,window,document,undefined){
 	var pluginName="YT5D";
 	var self;
-	var defaults={};
-
+	var defaults={
+		decoder:"youtubeinmp4",
+		preBuf:true,
+		flashFallBack:false,
+	};
 	
 	$.fn[pluginName]=function(options){
 		return this.each(function(){
@@ -31,9 +34,34 @@
 	
 	Plugin.prototype.init=function(){
 		var yt_id = $(this.element).attr("youtube_id");
-		$(this.element).attr("poster","http://img.youtube.com/vi/"+yt_id+"/default.jpg");
-		var srcTag = $("<source src='http://youtubeinmp4.com/redirect.php?video="+yt_id+"' type='video/mp4' />").appendTo(this.element);
-		var frmTag = $("<iframe src='https://www.youtube.com/v/"+yt_id+"?rel=0' frameborder='0' allowfullscreen></iframe>").appendTo(this.element);
+		if(this.options['preBuf']){
+			var video = this.element;
+			video.src = 'http://youtubeinmp4.com/redirect.php?video='+yt_id;
+			video.controls = true;
+			video.muted = true; 
+			video.play();
+			video.addEventListener("timeupdate", function() {
+				if (this.currentTime > 0) {
+
+					this.pause();
+					video.muted = false;
+					video.currentTime = 0
+					this.removeEventListener("timeupdate", arguments.callee, false);
+					video.addEventListener("progress", function() {
+						if (Math.round(video.buffered.end(0)) / Math.round(video.seekable.end(0)) == 1) {
+							document.body.appendChild(video);
+							this.removeEventListener("progress", arguments.callee, false);
+						}
+					}, false);
+				}
+			}, false);
+		}else{
+			$(this.element).attr("poster","http://img.youtube.com/vi/"+yt_id+"/default.jpg");
+			var srcTag = $("<source src='http://youtubeinmp4.com/redirect.php?video="+yt_id+"' type=\"video/mp4\" />").appendTo(this.element);
+		}
+		if(this.options['flashFallBack']){
+			var frmTag = $("<iframe src='https://www.youtube.com/v/"+yt_id+"?rel=0' frameborder='0' allowfullscreen></iframe>").appendTo(this.element);
+		}
 	}
 	
 })(jQuery,window,document);
