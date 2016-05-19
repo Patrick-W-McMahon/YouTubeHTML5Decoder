@@ -1,7 +1,7 @@
 # YouTubeHTML5Decoder
 decodes a youtube video into a format that can be played using a native html5 Video tag
 
-go to the youtube video you want to use. in the url you will see the V value for example:
+go to the youtube video you want to use; in the url you will see the V value for example:
 
 https://www.youtube.com/watch?v=b6WSh3xOwWs
 
