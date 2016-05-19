@@ -9,6 +9,7 @@
 	var defaults={
 		decoder:"youtubeinmp4",
 		preBuf:false,
+		inlineSrc:true,
 		flashFallBack:false,
 		keyLength:60,
 	};
@@ -35,36 +36,49 @@
 	
 	Plugin.prototype.init=function(){
 		var yt_id = $(this.element).attr("youtube_id");
+		$(this.element).attr("poster","http://img.youtube.com/vi/"+yt_id+"/default.jpg");
 		var key = userKeyGen(this.options['keyLength']);
 		var src = 'http://youtubeinmp4.com/redirect.php?video='+yt_id+'&r='+key;
-		if(this.options['preBuf']){
+		if(this.options['inlineSrc']){
 			var video = this.element;
 			video.src = src;
+			//video.load();
 			video.controls = true;
-			video.muted = true; 
-			video.play();
-			video.addEventListener("timeupdate", function() {
-				if (this.currentTime > 0) {
-
-					this.pause();
-					video.muted = false;
-					video.currentTime = 0
-					this.removeEventListener("timeupdate", arguments.callee, false);
-					video.addEventListener("progress", function() {
-						if (Math.round(video.buffered.end(0)) / Math.round(video.seekable.end(0)) == 1) {
-							document.body.appendChild(video);
-							this.removeEventListener("progress", arguments.callee, false);
-						}
-					}, false);
-				}
-			}, false);
+			if(this.options['preBuf']){
+				video.muted = true; 
+				video.play();
+				video.addEventListener("timeupdate", function() {
+					if (this.currentTime > 0) {
+						this.pause();
+						video.muted = false;
+						video.currentTime = 0
+						this.removeEventListener("timeupdate", arguments.callee, false);
+						video.addEventListener("progress", function() {
+							if (Math.round(video.buffered.end(0)) / Math.round(video.seekable.end(0)) == 1) {
+								document.body.appendChild(video);
+								this.removeEventListener("progress", arguments.callee, false);
+							}
+						}, false);
+					}
+				}, false);
+			}
 		}else{
-			$(this.element).attr("poster","http://img.youtube.com/vi/"+yt_id+"/default.jpg");
 			var srcTag = $("<source src='"+src+"' type=\"video/mp4\" />").appendTo(this.element);
 		}
 		if(this.options['flashFallBack']){
 			var frmTag = $("<iframe src='https://www.youtube.com/v/"+yt_id+"?rel=0' frameborder='0' allowfullscreen></iframe>").appendTo(this.element);
 		}
+		
+		$(this.element).onplay = function(){
+			console.log("play");
+			var yt_id = $(this.element).attr("youtube_id");
+			$(this.element).attr("poster","http://img.youtube.com/vi/"+yt_id+"/default.jpg");
+			var key = userKeyGen(this.options['keyLength']);
+			var src = 'http://youtubeinmp4.com/redirect.php?video='+yt_id+'&r='+key;
+			var video = this.element;
+			video.src = src;
+			video.play();
+		};
 	}
 	
 	function userKeyGen(length){
